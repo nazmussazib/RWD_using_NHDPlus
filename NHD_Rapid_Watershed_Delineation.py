@@ -160,6 +160,9 @@ def Point_Watershed_Function(longitude,latitude,snapping,maximum_snap_distance,P
     os.remove(f)
 
 
+if __name__ == '__main__':
+# Map command line arguments to function arguments.
+Point_Watershed_Function(*sys.argv[1:])
 
 
 

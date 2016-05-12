@@ -159,8 +159,6 @@ def PreProcess_TauDEM_for_On_Fly_WatershedDelineation_NHD(input_dir_name,watersh
            #  input.close()
 
 
-
-
 # #
 # #Remove subwatershed directory which we dont need
     with fiona.open(infile) as source:
@@ -180,6 +178,10 @@ def PreProcess_TauDEM_for_On_Fly_WatershedDelineation_NHD(input_dir_name,watersh
             if os.path.isfile(file1):
 
                 os.remove(file1)
+
+if __name__ == '__main__':
+    # Map command line arguments to function arguments.
+    PreProcess_TauDEM_for_On_Fly_WatershedDelineation_NHD(*sys.argv[1:])
 
 
 
