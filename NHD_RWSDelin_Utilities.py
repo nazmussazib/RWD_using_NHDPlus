@@ -498,15 +498,11 @@ def split(line_string, point):
         return coords[:j + 1], coords[j:]
 
 
-def Get_Watershed_Attributes(Outlet_Point,Point_Watershed,elev_file,Max_elev_file,
-                             Ad8_weigthed_file,Ad8_file,
-                             plen_file,tlen_file,gord_file,dir_subwatershed,out_dir):
+def Get_Watershed_Attributes(Outlet_Point,Point_Watershed,
+                             ad8_file,plen_file,tlen_file,gord_file,dir_subwatershed,out_dir):
 
     os.chdir(out_dir)
-    elev_file_with_path=os.path.join(dir_subwatershed,elev_file)
-    Max_elev_file_with_path=os.path.join(dir_subwatershed,Max_elev_file)
-    Ad8_weigthed_file_with_path=os.path.join(dir_subwatershed,Ad8_weigthed_file)
-    Ad8_file_with_path=os.path.join(dir_subwatershed,Ad8_file)
+    ad8_file_with_path=os.path.join(dir_subwatershed,ad8_file)
     gord_file_with_path=os.path.join(dir_subwatershed,gord_file)
     plen_file_with_path=os.path.join(dir_subwatershed,plen_file)
     tlen_file_with_path=os.path.join(dir_subwatershed,tlen_file)
@@ -514,14 +510,8 @@ def Get_Watershed_Attributes(Outlet_Point,Point_Watershed,elev_file,Max_elev_fil
     Basin_length=extract_value_from_raster(plen_file_with_path,Outlet_Point)
     Stream_Order=extract_value_from_raster(gord_file_with_path,Outlet_Point)
     Total_stream_length= extract_value_from_raster(tlen_file_with_path,Outlet_Point)
-    Max_elev=extract_value_from_raster(Max_elev_file_with_path,Outlet_Point)
-    outlet_elev=extract_value_from_raster(elev_file_with_path,Outlet_Point)
-    Ad8_weighted=extract_value_from_raster(Ad8_weigthed_file_with_path,Outlet_Point)
-    Ad8=extract_value_from_raster(Ad8_file_with_path,Outlet_Point)
-    Area=Ad8*10.3*7.85/(1000*1000) ## use Spehorid.R function for calculating dxc and dyc . choose median value for dyc and dxc which is approximations
-    Basin_Relief= Max_elev-outlet_elev
-    Relief_Ratio=Basin_Relief/Basin_length
-    Avg_slope=Ad8_weighted/Ad8
+    Ad8=extract_value_from_raster(ad8_file_with_path,Outlet_Point)
+    Area=Ad8*30*30/(1000*1000) ## use Spehorid.R function for calculating dxc and dyc . choose median value for dyc and dxc which is approximations
     Drainage_Density=Total_stream_length/(Area*1000)
     Length_Overland_flow=1/(2*Drainage_Density)
     source = ogr.Open(Point_Watershed, 1)
@@ -539,16 +529,10 @@ def Get_Watershed_Attributes(Outlet_Point,Point_Watershed,elev_file,Max_elev_fil
     layer.CreateField(new_field)
     new_field = ogr.FieldDefn('AvgOLF', ogr.OFTReal)
     layer.CreateField(new_field)
-    new_field = ogr.FieldDefn('BR',ogr.OFTReal)
-    layer.CreateField(new_field)
-    new_field = ogr.FieldDefn('RR', ogr.OFTReal)
-    layer.CreateField(new_field)
-    new_field = ogr.FieldDefn('Avgslp', ogr.OFTReal)
-    layer.CreateField(new_field)
     feature = layer.GetFeature(0)
     start_time3 = time.time()
-    my_at_val=[0,Area,float(Basin_length)/1000.00,Stream_Order, float(Total_stream_length/1000.0),float(Drainage_Density),float(Length_Overland_flow),float(Basin_Relief),float(Relief_Ratio), float(Avg_slope) ]
-    for i in range(1, 10):
+    my_at_val=[0,Area,float(Basin_length)/1000.00,Stream_Order, float(Total_stream_length/1000.0),float(Drainage_Density),float(Length_Overland_flow) ]
+    for i in range(1, 7):
 
         feature.SetField( i, float(my_at_val[i]))
 

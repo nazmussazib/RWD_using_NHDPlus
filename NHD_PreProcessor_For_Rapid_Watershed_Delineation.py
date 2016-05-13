@@ -8,7 +8,7 @@ import shapefile
 import subprocess
 import glob
 def PreProcess_TauDEM_for_On_Fly_WatershedDelineation_NHD(input_dir_name,watershed_file,watershed_id_file,p_file,src_file,
-                                                      dist_file):
+                                                      dist_file,ad8_file,plen_file,tlen_file,gord_file):
     input_dir1=input_dir_name+"\\Main_Watershed"
     infile = input_dir1+"\\"+watershed_file
     complimentary_subwatershed_file=input_dir_name+"\\Subwatershed\\Full_watershed"
@@ -140,6 +140,14 @@ def PreProcess_TauDEM_for_On_Fly_WatershedDelineation_NHD(input_dir_name,watersh
             flowdir=os.path.join(main_dir,flow_file);flow_out_file=os.path.join(dir,'subwatershed_'+str(int(f['properties']['GRIDCODE']))+"p.tif")
             streamdir=os.path.join(main_dir,stream_file);stream_out_file=os.path.join(dir,'subwatershed_'+str(int(f['properties']['GRIDCODE']))+"src1.tif")
             distancedir=os.path.join(main_dir,D8distance_file);distance_out_file=os.path.join(dir,'subwatershed_'+str(int(f['properties']['GRIDCODE']))+"dist.tif")
+           ## for wateshed attributes
+
+            ## for getting watershed attributes
+            ad8dir = os.path.join(main_dir, ad8_file);ad8_out_file = os.path.join(dir, 'subwatershed_' + str(int(f['properties']['GRIDCODE'])) + "ad8.tif")
+            plendir = os.path.join(main_dir, plen_file);  plen_out_file = os.path.join(dir, 'subwatershed_' + str(int(f['properties']['GRIDCODE'])) + "plen.tif")
+            tlendir = os.path.join(main_dir, tlen_file);tlen_out_file = os.path.join(dir, 'subwatershed_' + str(int(f['properties']['GRIDCODE'])) + "tlen.tif")
+            gorddir = os.path.join(main_dir, gord_file);gord_out_file = os.path.join(dir, 'subwatershed_' + str(int(f['properties']['GRIDCODE'])) + "gord.tif")
+
             input = fiona.open(outputBufferfn, 'r')
             xmin=str(input.bounds[0])
             ymin=str(input.bounds[1])
@@ -147,14 +155,23 @@ def PreProcess_TauDEM_for_On_Fly_WatershedDelineation_NHD(input_dir_name,watersh
             ymax=str(input.bounds[3])
             layer_name=os.path.splitext(outputBufferfn)[0]
 
-            command_flow="gdalwarp -te " + xmin + " " + ymin + " " + xmax + " " + ymax + " -dstnodata -32768 -cutline " + outputBufferfn + " -cl "+ layer_name + " " + flowdir + " " + flow_out_file
-            command_stream="gdalwarp -te " + xmin + " " + ymin + " " + xmax + " " + ymax + " -dstnodata -32768 -cutline " + outputBufferfn + " -cl "+ layer_name + " " + streamdir + " " + stream_out_file
-            command_distance="gdalwarp -te " + xmin + " " + ymin + " " + xmax + " " + ymax + " -dstnodata -32768.00 -cutline " + outputBufferfn + " -cl "+ layer_name + " " + distancedir + " " + distance_out_file
+            command_flow = "gdalwarp -te " + xmin + " " + ymin + " " + xmax + " " + ymax + " -dstnodata -32768 -cutline " + outputBufferfn + " -cl " + layer_name + " " + flowdir + " " + flow_out_file
+            command_stream = "gdalwarp -te " + xmin + " " + ymin + " " + xmax + " " + ymax + " -dstnodata -32768 -cutline " + outputBufferfn + " -cl " + layer_name + " " + streamdir + " " + stream_out_file
+            command_distance = "gdalwarp -te " + xmin + " " + ymin + " " + xmax + " " + ymax + " -dstnodata -32768.00 -cutline " + outputBufferfn + " -cl " + layer_name + " " + distancedir + " " + distance_out_file
 
+            command_ad8 = "gdalwarp -te " + xmin + " " + ymin + " " + xmax + " " + ymax + " -dstnodata -32768 -cutline " + outputBufferfn + " -cl " + layer_name + " " + ad8dir + " " + ad8_out_file
+            command_plen = "gdalwarp -te " + xmin + " " + ymin + " " + xmax + " " + ymax + " -dstnodata -32768 -cutline " + outputBufferfn + " -cl " + layer_name + " " + plendir + " " + plen_out_file
+            command_tlen = "gdalwarp -te " + xmin + " " + ymin + " " + xmax + " " + ymax + " -dstnodata -32768 -cutline " + outputBufferfn + " -cl " + layer_name + " " + tlendir + " " + tlen_out_file
+            command_gord = "gdalwarp -te " + xmin + " " + ymin + " " + xmax + " " + ymax + " -dstnodata -32768 -cutline " + outputBufferfn + " -cl " + layer_name + " " + gorddir + " " + gord_out_file
 
             subprocess.check_call(command_flow)
             subprocess.check_call(command_stream)
             subprocess.check_call(command_distance)
+
+            subprocess.check_call(command_ad8)
+            subprocess.check_call(command_plen)
+            subprocess.check_call(command_tlen)
+            subprocess.check_call(command_gord)
 
            #  input.close()
 

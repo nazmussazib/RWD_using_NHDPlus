@@ -52,6 +52,11 @@ def Point_Watershed_Function(longitude,latitude,snapping,maximum_snap_distance,P
       shp_filename = os.path.join(Output_dir,"mypoint.shp")
       distance_stream=extract_value_from_raster(src_filename,shp_filename)
       Grid_Name=sub_file_name+str(int(ID))
+      ## add file name for attributes
+      ad8_file = sub_file_name + str(int(ID)) + "ad8.tif"
+      gord_file = sub_file_name + str(int(ID)) + "gord.tif"
+      plen_file = sub_file_name + str(int(ID)) + "plen.tif"
+      tlen_file = sub_file_name + str(int(ID)) + "tlen.tif"
 
    MPH_dir=MPI_dir
    TauDEM_dir=TauDEM_dir
@@ -135,6 +140,7 @@ def Point_Watershed_Function(longitude,latitude,snapping,maximum_snap_distance,P
       os.system(cmd)
 
    start_time = time.time()
+   Get_Watershed_Attributes('New_Outlet.shp', 'New_Point_Watershed.shp',ad8_file, plen_file, tlen_file, gord_file, subwatershed_dir, Output_dir)
    print("watershed attributes time %s seconds ---" % (time.time() - start_time))
    pattern = "^mypoint"
    path=Output_dir
@@ -160,11 +166,10 @@ def Point_Watershed_Function(longitude,latitude,snapping,maximum_snap_distance,P
     os.remove(f)
 
 
+
 if __name__ == '__main__':
-# Map command line arguments to function arguments.
-Point_Watershed_Function(*sys.argv[1:])
-
-
+    # Map command line arguments to function arguments.
+    Point_Watershed_Function(*sys.argv[1:])
 
 
 
